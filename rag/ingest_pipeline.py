@@ -3,7 +3,7 @@ import asyncio
 import time
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.ingestion import IngestionPipeline, IngestionCache
-from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
 from llama_index.core.extractors import SummaryExtractor
@@ -15,7 +15,7 @@ os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
 Settings.llm = Groq(
     model="meta-llama/llama-4-scout-17b-16e-instruct",
     api_key=GROQ_API_KEY,
-    temperature=0.2,
+    temperature=0.6,
 )
 
 class SequentialSummaryExtractor(SummaryExtractor):
@@ -48,11 +48,19 @@ def ingest_documents():
         cache = None
         print("No cache file found. Creating a new pipeline.")
 
+    embed_model = HuggingFaceEmbedding(model_name="AITeamVN/Vietnamese_Embedding")
+
+    semantic_parser = SemanticSplitterNodeParser(
+        buffer_size=1,
+        breakpoint_percentile_threshold=95,
+        embed_model=embed_model,
+    )
+
     pipeline = IngestionPipeline(
         transformations=[
-            TokenTextSplitter(chunk_size=1500, chunk_overlap=150),
-            SequentialSummaryExtractor(rate_per_minute=30, summaries=["self"]),
-            HuggingFaceEmbedding(model_name="AITeamVN/Vietnamese_Embedding"),
+            semantic_parser,
+            # SequentialSummaryExtractor(rate_per_minute=30, summaries=["self"]),
+            embed_model,
         ],
         cache=cache,
     )
