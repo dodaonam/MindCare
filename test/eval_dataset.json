@@ -1,0 +1,118 @@
+[
+{
+"question": "Mã số chẩn đoán của Rối loạn ngôn ngữ (Language Disorder) là gì?",
+"reference": "Mã số chẩn đoán của Rối loạn ngôn ngữ là 315.39 (F80.9)."
+},
+{
+"question": "Có bao nhiêu triệu chứng tối thiểu cần thiết để chẩn đoán một cơn hoảng sợ (Panic Attack) trong Rối loạn hoảng sợ?",
+"reference": "Một cơn hoảng sợ đạt đến cường độ đỉnh trong vòng vài phút, trong thời gian đó có 4 (hoặc nhiều hơn) các triệu chứng được liệt kê."
+},
+{
+"question": "Đối với người trưởng thành (từ 17 tuổi trở lên), cần đáp ứng tối thiểu bao nhiêu triệu chứng Giảm chú ý để đáp ứng tiêu chuẩn chẩn đoán Rối loạn tăng động/giảm chú ý (ADHD)?",
+"reference": "Ở trẻ vị thành niên lớn hoặc người trưởng thành (từ 17 tuổi trở lên), ít nhất 5 triệu chứng Giảm chú ý cần được đáp ứng."
+},
+{
+"question": "Để chẩn đoán Rối loạn trầm cảm chủ yếu (Major Depressive Disorder), cần phải có tối thiểu bao nhiêu triệu chứng trong số các triệu chứng được liệt kê, và ít nhất phải có 1 trong 2 triệu chứng chính nào?",
+"reference": "Cần Năm (hoặc nhiều hơn) các triệu chứng cùng xuất hiện trong thời gian 2 tuần và ít nhất phải có 1 trong 2 triệu chứng chính là (1) khí sắc giảm, hoặc là (2) mất thích thú/sở thích."
+},
+{
+"question": "Các triệu chứng sợ hãi, lo âu, hoặc né tránh dai dẳng trong Rối loạn lo âu lan tỏa (Generalized Anxiety Disorder - GAD) phải kéo dài ít nhất bao lâu?",
+"reference": "Lo âu quá mức hoặc lo lắng xảy ra nhiều ngày không ít hơn 06 tháng, tập trung vào một số sự kiện hoặc hoạt động."
+},
+{
+"question": "Điểm khác biệt chính giữa Rối loạn trầm cảm dai dẳng (loạn khí sắc) và Rối loạn trầm cảm chủ yếu là gì, liên quan đến tính liên tục của triệu chứng?",
+"reference": "Rối loạn trầm cảm chủ yếu được xác định từ một hoặc nhiều giai đoạn trầm cảm chủ yếu riêng rẽ có các giai đoạn lui bệnh giữa các cơn trầm cảm chủ yếu. Trong khi đó, loạn khí sắc được đặc trưng bởi các triệu chứng trầm cảm nhẹ và biểu hiện liên tục trong nhiều năm."
+},
+{
+"question": "Để chẩn đoán Rối loạn rối loạn nhân cách chống đối xã hội (Antisocial Personality Disorder), cá nhân phải đáp ứng tiêu chuẩn về độ tuổi tối thiểu nào, và phải có bằng chứng về rối loạn hành vi đạo đức khởi phát trước tuổi nào?",
+"reference": "Người bệnh phải từ 18 tuổi trở lên. Phải có bằng chứng rối loạn hành vi đạo đức khởi phát trước tuổi 15."
+},
+{
+"question": "Khoảng thời gian tổn thương tối thiểu và tối đa để chẩn đoán Rối loạn dạng phân liệt (Schizophreniform Disorder) là bao lâu? Nếu cần đặt chẩn đoán mà không đợi hồi phục thì chẩn đoán đó là gì?",
+"reference": "Một giai đoạn tổn thương kéo dài **ít nhất 1 tháng nhưng ngắn hơn 6 tháng**. Khi cần đặt chẩn đoán này mà không cần đợi hồi phục, chẩn đoán đó là **tạm thời**."
+},
+{
+"question": "Ba tiêu chuẩn bắt buộc phải thỏa mãn để chẩn đoán Rối loạn phát triển trí tuệ (Intellectual Disability) là gì, và sự khởi phát phải xảy ra trong giai đoạn nào?",
+"reference": "Phải thỏa mãn 3 tiêu chuẩn: 1. Những suy giảm chức năng trí tuệ được khẳng định bởi cả đánh giá lâm sàng và test trí tuệ chuẩn. 2. Suy giảm chức năng thích nghi dẫn đến không phát triển được đầy đủ tâm thần và xã hội để sống độc lập và thích nghi xã hội. 3. Khởi phát của suy giảm trí tuệ và thích ứng trong **thời kỳ phát triển**."
+},
+{
+"question": "Mã số chẩn đoán của Rối loạn phát âm (Speech Sound Disorder) là gì?",
+"reference": "Mã số chẩn đoán của Rối loạn phát âm là 315.39 (F80.0)."
+},
+{
+"question": "Giai đoạn hưng cảm (Manic Episode) cần kéo dài tối thiểu bao lâu để đáp ứng tiêu chuẩn chẩn đoán Rối loạn lưỡng cực I?",
+"reference": "Giai đoạn hưng cảm phải kéo dài **ít nhất một tuần** (hoặc kéo dài bất kỳ nếu cần thiết phải vào viện)."
+},
+{
+"question": "Để chẩn đoán Rối loạn Lo âu Có Bệnh (Illness Anxiety Disorder), mối bận tâm lo lắng về bệnh phải kéo dài tối thiểu bao lâu?",
+"reference": "Lo lắng này kéo dài **ít nhất 6 tháng**."
+},
+{
+"question": "Rối loạn Lo âu Xã hội (Social Anxiety Disorder/Social Phobia) được chẩn đoán khi sự sợ hãi, lo âu, hoặc né tránh dai dẳng kéo dài tối thiểu bao lâu?",
+"reference": "Sự sợ hãi, lo âu, hoặc né tránh là dai dẳng, thường kéo dài trong **6 tháng hoặc hơn**."
+},
+{
+"question": "Trong Rối loạn Ám ảnh – Cưỡng bức (OCD), các hành vi ám ảnh cưỡng bức phải tốn bao nhiêu thời gian tối thiểu để được coi là có ý nghĩa lâm sàng?",
+"reference": "Sự ám ảnh cưỡng bức **tốn thời gian (ví dụ, phải mất hơn 1 giờ mỗi ngày)**, gây distress đáng kể trên lâm sàng, gây suy giảm chức năng xã hội, nghề nghiệp, hoặc các chức năng quan trọng khác."
+},
+{
+"question": "Để chẩn đoán Rối loạn Ăn Nhiều Tâm lý (Bulimia Nervosa), các giai đoạn ăn vô độ và các hành vi bù trừ phải xảy ra với tần suất và thời gian tối thiểu là bao lâu?",
+"reference": "Ăn vô độ và sau đó là những hành vi bù trừ thường xuyên diễn ra, khoảng **1 lần/tuần, trong 3 tháng**."
+},
+{
+"question": "Theo tiêu chuẩn, độ tuổi giới hạn nào được đặt ra cho việc chẩn đoán Rối loạn Điều chỉnh Khí sắc (Disruptive Mood Dysregulation Disorder - DMDD) lần đầu?",
+"reference": "Chẩn đoán lần đầu được đưa ra **trước 6 tuổi hoặc sau 18 tuổi** . Ngoài ra, các triệu chứng phải khởi phát trước 10 tuổi."
+},
+{
+"question": "Rối loạn Khí sắc Chu kỳ (Cyclothymic Disorder) yêu cầu bệnh nhân không bao giờ thiếu các triệu chứng (giống hưng cảm nhẹ và trầm cảm nhẹ) kéo dài liên tục hơn bao nhiêu tháng trong tổng thời gian bệnh là 2 năm (hoặc 1 năm cho trẻ em và vị thành niên)?",
+"reference": "Trong phạm vi 2 năm nêu trên (1 năm cho trẻ em và vị thành niên) bệnh nhân không bao giờ thiếu các triệu chứng trong tiêu chuẩn A cho một giai đoạn **hơn 2 tháng**."
+},
+{
+"question": "Trong chẩn đoán Rối loạn học biệt định (Specific Learning Disorder), nếu cá nhân từ 17 tuổi trở lên, tài liệu nào có thể được sử dụng thay thế cho đánh giá chuẩn để khẳng định sự suy giảm?",
+"reference": "Đối với những trường hợp từ 17 tuổi trở lên, **các văn bản xác nhận suy giảm khả năng học** có thể được sử dụng thay thế đánh giá chuẩn."
+},
+{
+"question": "Yếu tố chẩn đoán quan trọng nhất phân biệt giữa Rối loạn stress cấp (Acute Stress Disorder) và Rối loạn stress sau sang chấn (PTSD) là gì, và thời gian tối đa để chẩn đoán Rối loạn stress cấp là bao lâu?",
+"reference": "Rối loạn stress cấp tính được phân biệt với PTSD vì các triệu chứng trong rối loạn stress cấp tính được giới hạn trong một thời gian **từ 3 ngày đến 1 tháng** sau khi tiếp xúc với sang chấn. PTSD được chẩn đoán khi triệu chứng kéo dài **hơn 1 tháng**."
+},
+{
+"question": "Để chẩn đoán Rối loạn lo âu chia tách (Separation Anxiety Disorder) ở người lớn, các triệu chứng sợ hãi, lo lắng hoặc né tránh dai dẳng cần kéo dài tối thiểu bao lâu?",
+"reference": "Sợ hãi, lo lắng hoặc né tránh dai dẳng, kéo dài ít nhất là 4 tuần ở trẻ em và vị thành niên và là điển hình trong 6 tháng hoặc dài hơn ở người lớn."
+},
+{
+"question": "Trong Rối loạn trầm cảm dai dẳng (loạn khí sắc), nếu có các triệu chứng thỏa mãn tiêu chuẩn A và B, bệnh nhân không bao giờ được phép không có các triệu chứng này liên tục quá bao nhiêu tháng trong tổng thời gian bệnh là 2 năm?",
+"reference": "Trong giai đoạn kéo dài 2 năm (một năm cho trẻ em hoặc vị thành niên) bệnh nhân không bao giờ không có các triệu chứng thoả mãn tiêu chuẩn A và B trong thời gian kéo dài hơn 2 tháng, mỗi lần."
+},
+{
+"question": "Để chẩn đoán Rối loạn điều chỉnh khí sắc (Disruptive Mood Dysregulation Disorder), các cơn bùng nổ cảm xúc trầm trọng tái diễn phải xuất hiện với tần suất trung bình khoảng bao nhiêu lần mỗi tuần?",
+"reference": "Các cơn bùng nổ xuất hiện trung bình khoảng 3 lần (hoặc hơn) trong một tuần."
+},
+{
+"question": "Trong Rối loạn Stress Cấp (Acute Stress Disorder), để đáp ứng tiêu chuẩn chẩn đoán, cá nhân cần phải có tối thiểu bao nhiêu triệu chứng từ năm nhóm triệu chứng cơ bản (xâm nhập, cảm xúc tiêu cực, phân ly, né tránh, kích thích)?",
+"reference": "Sự hiện diện của 9 (hoặc nhiều hơn) các triệu chứng sau đây từ năm nhóm triệu chứng cơ bản: bị xâm nhập, cảm xúc tiêu cực, phân ly, né tránh, kích thích, bắt đầu sau sang chấn."
+},
+{
+"question": "Trong chẩn đoán Rối loạn lo âu lan tỏa (Generalized Anxiety Disorder - GAD), có bao nhiêu triệu chứng tối thiểu (trong số 6 triệu chứng) cần phải được phối hợp với lo âu quá mức ở trẻ em, và bao nhiêu triệu chứng ở người lớn?",
+"reference": "Lo âu được phối hợp với ít nhất 3 trong số 6 tiêu chuẩn sau (kéo dài ít nhất 6 tháng). Lưu ý: ở trẻ em chỉ cần 1 triệu chứng."
+},
+{
+"question": "Để được chẩn đoán là Rối loạn loạn thần ngắn (Brief Psychotic Disorder), tổng thời gian của rối loạn phải nằm trong khoảng thời gian nào, và sau đó các chức năng phải trở lại mức độ nào?",
+"reference": "Độ dài của rối loạn ít nhất là 1 ngày nhưng ít hơn 1 tháng, các chức năng trở lại mức độ như trước khi bị bệnh."
+},
+{
+"question": "Yếu tố chẩn đoán quan trọng nhất phân biệt Rối loạn nhân cách thể paranoid với Rối loạn hoang tưởng là gì?",
+"reference": "Rối loạn nhân cách thể paranoid được phân biệt với rối loạn hoang tưởng do bệnh nhân không có các hoang tưởng."
+},
+{
+"question": "Trong Rối loạn tích trữ (Hoarding Disorder), sự tích trữ có ý nghĩa lâm sàng phải dẫn đến việc gì liên quan đến không gian sống, và việc này phải kéo dài ít nhất bao lâu?",
+"reference": "Khó khăn kéo dài trong việc từ bỏ đồ dùng, vật dụng mặc dù chúng không còn nhiều giá trị. Sự tích trữ gây ra distress đáng kể về mặt lâm sàng hoặc gây tổn thiệt đến các chức năng xã hội, nghề nghiệp hoặc các lĩnh vực quan trọng khác (bao gồm cả việc duy trì an toàn môi trường cho cá nhân và những người khác)."
+},
+{
+"question": "Trong Rối loạn nhân cách chống đối xã hội (Antisocial Personality Disorder), hành vi chống xã hội có được chẩn đoán là rối loạn này không nếu nó rõ ràng là hậu quả của nghiện rượu và ma túy?",
+"reference": "Khi mà hành vi chống đối xã hội rõ ràng là hậu quả của nghiện rượu và ma túy thì không được chẩn đoán là rối loạn nhân cách thể chống xã hội."
+},
+{
+"question": "Để chẩn đoán Rối loạn cảm xúc phân liệt, giai đoạn có hoang tưởng và ảo giác mà không có triệu chứng rối loạn cảm xúc rõ ràng phải kéo dài tối thiểu bao lâu trong cùng giai đoạn tổn thương?",
+"reference": "Trong cùng giai đoạn tổn thương, có các hoang tưởng, ảo giác kéo dài ít nhất 2 tuần khi không có một triệu chứng rối loạn cảm xúc nào rõ ràng."
+}
+]
