@@ -14,3 +14,4 @@ INDEX_STORAGE = "data/index_storage/"
 FILES_PATH = [f"{STORAGE_PATH}/dsm-5-sach-tieng-viet.docx"]
 DATASET_PATH = "test/eval_dataset.json"
 OUTPUT_FILE = "test/evaluate_output.txt"
+ASSESSMENT_DIR = "data/assessments"
