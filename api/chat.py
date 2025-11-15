@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from api.agent import chat
+from rag.safety import detect_safety_issue
 
 router = APIRouter()
 
@@ -9,5 +10,45 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat_endpoint(req: ChatRequest):
-    reply = await chat(req.message)
-    return {"reply": reply}
+    user_msg = req.message
+
+    # Safety check
+    safety = detect_safety_issue(user_msg)
+    level = safety["level"]
+    print("SAFETY CHECK:", safety)
+
+    # Crisis case
+    if level == "crisis":
+        return {
+            "reply": (
+                "⚠️ Mình rất tiếc khi nghe điều đó. An toàn của bạn lúc này là quan trọng nhất.\n\n"
+                "👉 Bạn có thể gọi ngay **1900 1267 (phím 1)** — đường dây hỗ trợ khủng hoảng tâm lý và trầm cảm, trực 24/7.\n\n"
+                "👉 Nếu bạn muốn một lựa chọn khác, bạn có thể gọi **096 306 1414** – đường dây 'Ngày Mai'.\n\n"
+                "Nếu bạn cảm thấy mình đang gặp nguy hiểm ngay lúc này, hãy gọi **115** hoặc đến cơ sở y tế gần nhất.\n\n"
+                "Bạn không đơn độc — hãy tìm sự hỗ trợ ngay lúc này."
+            ),
+            "safety": safety
+        }
+
+    # Warning case
+    warning_text = None
+    if level == "warning":
+        warning_text = (
+            "⚠️ Mình cảm nhận được là bạn đang trải qua một giai đoạn khó khăn. "
+            "Cảm xúc như vậy hoàn toàn có thật và đáng để lắng nghe. Mình sẽ luôn ở đây để hỗ trợ bạn trong khả năng của mình.\n\n"
+            "Nếu những cảm xúc này kéo dài hoặc trở nên nặng nề hơn, "
+            "bạn có thể cân nhắc chia sẻ với một chuyên gia tâm lý hoặc người thân mà bạn tin tưởng. "
+            "Bạn không cần phải tự mình vượt qua tất cả đâu."
+        )
+
+    # Normal chat response
+    bot_reply = await chat(user_msg)
+
+    # Prepend warning message
+    if warning_text:
+        bot_reply = warning_text + "\n\n" + bot_reply
+
+    return {
+        "reply": bot_reply,
+        "safety": safety
+    }
