@@ -1,7 +1,7 @@
 from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.llms.groq import Groq
 from llama_index.core import Settings
-from rag.agent_tools import get_dsm5_tool
+from rag.agent_tools import get_dsm5_tool, get_safety_tool
 from rag.global_settings import GROQ_API_KEY
 
 SYSTEM_PROMPT = """
@@ -34,8 +34,7 @@ def get_agent():
         temperature=0.6,
     )
 
-    dsm_tool = get_dsm5_tool()
-    tools = [dsm_tool]
+    tools = [get_dsm5_tool(), get_safety_tool()]
 
     _agent = FunctionAgent(
         name="MentalHealthAgent",
@@ -47,14 +46,3 @@ def get_agent():
 
     print("Agent initialized successfully.")
     return _agent
-
-if __name__ == "__main__":
-    import asyncio
-
-    async def _test():
-        agent = get_agent()
-        resp = await agent.run("tôi hay lo sợ khi xa người thân hơn 4 tuần")
-        print("\n=== AGENT RESPONSE ===\n")
-        print(str(resp))
-
-    asyncio.run(_test())
