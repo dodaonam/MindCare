@@ -1,4 +1,6 @@
 import re
+from llama_index.core.llms import ChatMessage, MessageRole
+from llama_index.core import Settings
 
 CRISIS_KEYWORDS = [
     r"tự\s*hại",
@@ -108,25 +110,70 @@ def normalize_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
-def detect_safety_issue(text: str):
+def keyword_match(text: str) -> dict:
+    """Detect potential crisis/warning keywords in the message."""
     text_norm = normalize_text(text)
 
-    crisis_matches = [
-        pat.pattern for pat in CRISIS_PATTERNS if pat.search(text_norm)
-    ]
-    warning_matches = [
-        pat.pattern for pat in WARNING_PATTERNS if pat.search(text_norm)
-    ]
-
-    if crisis_matches:
-        level = "crisis"
-    elif warning_matches:
-        level = "warning"
-    else:
-        level = "safe"
+    crisis_hits = [pat.pattern for pat in CRISIS_PATTERNS if pat.search(text_norm)]
+    warning_hits = [pat.pattern for pat in WARNING_PATTERNS if pat.search(text_norm)]
 
     return {
-        "level": level,
-        "crisis_matches": crisis_matches,
-        "warning_matches": warning_matches,
+        "crisis_hits": crisis_hits,
+        "warning_hits": warning_hits,
+    }
+
+SAFETY_PROMPT = """
+You are a mental health safety classifier. The user's message is in Vietnamese.
+
+Classify the message into one of the three categories below:
+
+1. CRISIS — The user expresses intent, plan, or immediate risk of self-harm or suicide.
+
+2. WARNING — The user expresses significant emotional distress such as prolonged sadness, persistent hopelessness, long-term depressive symptoms, or repeated negative feelings. 
+IMPORTANT: Mild or single neutral statements like "tôi buồn", "tôi chán nản", "tôi thấy mệt" should NOT be classified as WARNING unless they clearly indicate ongoing or severe emotional difficulty.
+
+3. SAFE — The user is asking questions, expressing light or temporary emotions, or discussing mental health academically.
+
+Return ONLY: CRISIS, WARNING, or SAFE.
+"""
+
+def llm_classify(text: str) -> str:
+    """Use LLM to classify message contextually."""
+    llm = Settings.llm
+
+    messages = [
+        ChatMessage(role=MessageRole.SYSTEM, content=SAFETY_PROMPT),
+        ChatMessage(role=MessageRole.USER, content=text),
+    ]
+
+    res = llm.chat(messages)
+    raw = res.message.content.strip().upper()
+
+    label = re.sub(r"[^A-Z]", "", raw)
+
+    if label in ["CRISIS", "WARNING", "SAFE"]:
+        return label
+    return "SAFE"
+
+def safety_check(text: str) -> dict:
+    """Hybrid safety detection: keyword scan → LLM contextual classification."""
+    scan = keyword_match(text)
+
+    # No risky keywords → SAFE immediately
+    if not scan["crisis_hits"] and not scan["warning_hits"]:
+        return {
+            "level": "safe",
+            "source": "keyword",
+            "crisis_matches": [],
+            "warning_matches": [],
+        }
+
+    # Keywords detected → LLM decides final severity
+    llm_result = llm_classify(text).lower()
+
+    return {
+        "level": llm_result,
+        "source": "llm",
+        "crisis_matches": scan["crisis_hits"],
+        "warning_matches": scan["warning_hits"],
     }

@@ -1,8 +1,6 @@
 from llama_index.core.agent.workflow import FunctionAgent
-from llama_index.llms.groq import Groq
-from llama_index.core import Settings
-from rag.agent_tools import get_dsm5_tool, get_safety_tool
-from rag.global_settings import GROQ_API_KEY
+from rag.agent_tools import get_dsm5_tool
+from rag.global_settings import init_llm_settings
 
 SYSTEM_PROMPT = """
 Bạn là một Trợ lý AI hỗ trợ sức khỏe tâm thần. Nhiệm vụ của bạn:
@@ -28,20 +26,16 @@ def get_agent():
     if _agent is not None:
         return _agent
 
-    Settings.llm = Groq(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
-        api_key=GROQ_API_KEY,
-        temperature=0.6,
-    )
+    init_llm_settings()
 
-    tools = [get_dsm5_tool(), get_safety_tool()]
+    tools = [get_dsm5_tool()]
 
     _agent = FunctionAgent(
         name="MentalHealthAgent",
         description="Trợ lý AI hỗ trợ sức khỏe tâm thần, sử dụng DSM-5 qua RAG.",
         system_prompt=SYSTEM_PROMPT,
         tools=tools,
-        verbose=True,
+        verbose=False,
     )
 
     print("Agent initialized successfully.")
