@@ -37,3 +37,20 @@ def load_assessment(filename: str) -> dict:
 
     with open(filepath, "r", encoding="utf-8") as f:
         return json.load(f)
+    
+def load_all_assessments_metadata() -> list:
+    files = list_assessments()
+    results = []
+
+    for f in files:
+        data = load_assessment(f)
+        if "error" not in data:
+            results.append({
+                "filename": f,
+                "timestamp": data.get("timestamp"),
+                "total_score": data.get("total_score"),
+                "level": data.get("level"),
+                "suicide_risk": data.get("suicide_risk"),
+            })
+
+    return results

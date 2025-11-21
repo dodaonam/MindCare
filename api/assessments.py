@@ -1,6 +1,10 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from rag.assessments import save_phq9_result
+from rag.assessments import (
+    save_phq9_result,
+    load_assessment,
+    load_all_assessments_metadata
+)
 
 router = APIRouter()
 
@@ -72,3 +76,16 @@ def score_phq9(data: PHQ9Answers):
         "saved_file": saved_path,
         **result
     }
+
+@router.get("/assessment/phq9/list")
+def phq9_list():
+    metadata = load_all_assessments_metadata()
+    return {
+        "count": len(metadata),
+        "items": metadata
+    }
+
+@router.get("/assessment/phq9/details/{filename}")
+def phq9_details(filename: str):
+    data = load_assessment(filename)
+    return data
