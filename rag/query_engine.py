@@ -1,6 +1,6 @@
 from llama_index.core import Settings
 from llama_index.llms.groq import Groq
-from rag.index_builder import get_or_build_index
+from rag.index_builder import load_index
 from rag.global_settings import GROQ_API_KEY
 
 _query_engine = None
@@ -18,7 +18,9 @@ def get_query_engine():
         return _query_engine
 
     init_llm()
-    index = get_or_build_index()
+    index = load_index()
+    if index is None:
+        raise ValueError("No ChromaDB index found. Please ingest again.")
 
     _query_engine = index.as_query_engine(
         similarity_top_k=5,
