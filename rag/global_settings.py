@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+from llama_index.llms.groq import Groq
+from llama_index.core import Settings
 
 load_dotenv()
 
@@ -15,3 +17,11 @@ DATASET_PATH = "test/eval_dataset.json"
 OUTPUT_FILE = "test/evaluate_output.txt"
 ASSESSMENT_DIR = "data/assessments"
 CHROMA_DIR = "data/chroma/"
+
+def init_llm_settings():
+    """Initialize global LLM settings once across the system."""
+    Settings.llm = Groq(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        api_key=GROQ_API_KEY,
+        temperature=0.6,
+    )

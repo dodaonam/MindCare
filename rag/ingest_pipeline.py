@@ -5,18 +5,12 @@ from llama_index.core import SimpleDirectoryReader
 from llama_index.core.ingestion import IngestionPipeline, IngestionCache
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.llms.groq import Groq
 from llama_index.core.extractors import SummaryExtractor
-from llama_index.core import Settings
-from rag.global_settings import FILES_PATH, CACHE_FILE, GROQ_API_KEY
+from rag.global_settings import FILES_PATH, CACHE_FILE, init_llm_settings
 
 os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
 
-Settings.llm = Groq(
-    model="meta-llama/llama-4-scout-17b-16e-instruct",
-    api_key=GROQ_API_KEY,
-    temperature=0.6,
-)
+init_llm_settings()
 
 class SequentialSummaryExtractor(SummaryExtractor):
     """SummaryExtractor that runs sequentially with rate limiting."""
