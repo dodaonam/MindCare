@@ -1,15 +1,16 @@
-from typing import Optional
 from dataclasses import dataclass
-from llama_index.core.query_engine import CitationQueryEngine
-from llama_index.core.base.response.schema import Response
-from rag.index_builder import load_index
-from rag.global_settings import init_llm_settings
+from llama_index.core import Settings
+from llama_index.core.schema import NodeWithScore
 
-CITATION_CHUNK_SIZE = 512  # Size of citation chunks
-SIMILARITY_TOP_K = 5  # Number of similar documents to retrieve
-MAX_SOURCES_RETURN = 3  # Maximum number of sources to return
-CITATION_QA_TEMPLATE_VI = """
-Dựa trên thông tin ngữ cảnh được cung cấp bên dưới, hãy trả lời câu hỏi.
+from rag.hybrid_retriever import hybrid_retrieve_with_fallback, clear_retriever_cache
+from rag.global_settings import (
+    init_llm_settings,
+    RERANK_TOP_N,
+    RELEVANCE_THRESHOLD,
+    MAX_SOURCES_RETURN,
+)
+
+RESPONSE_TEMPLATE_VI = """Dựa trên thông tin ngữ cảnh được cung cấp bên dưới, hãy trả lời câu hỏi.
 Nếu câu trả lời không có trong ngữ cảnh, hãy nói "Tôi không tìm thấy thông tin này trong tài liệu DSM-5."
 
 Ngữ cảnh:
@@ -17,8 +18,9 @@ Ngữ cảnh:
 
 Câu hỏi: {query_str}
 
-Hãy trả lời bằng tiếng Việt và trích dẫn nguồn bằng cách sử dụng [số] cho mỗi đoạn tham khảo.
-"""
+Hãy trả lời bằng tiếng Việt, ngắn gọn và chính xác."""
+
+FALLBACK_RESPONSE = "Tôi không tìm thấy thông tin liên quan trong tài liệu DSM-5. Bạn có thể mô tả chi tiết hơn hoặc hỏi về một chủ đề cụ thể về sức khỏe tâm thần không?"
 
 @dataclass
 class SourceInfo:
@@ -42,51 +44,23 @@ class CitationResponse:
     """Response with citations"""
     answer: str
     sources: list[SourceInfo]
+    is_fallback: bool = False  # True if no relevant results found
     
     def to_dict(self) -> dict:
-        """Convert to dictionary for JSON serialization."""
+        """Convert to dictionary for JSON serialization"""
         return {
             "answer": self.answer,
             "sources": [s.to_dict() for s in self.sources],
+            "is_fallback": self.is_fallback,
         }
 
-_citation_engine: Optional[CitationQueryEngine] = None
-
-def get_citation_query_engine() -> CitationQueryEngine:
+def extract_sources_from_nodes(nodes: list[NodeWithScore]) -> list[SourceInfo]:
     """
-    Get or create a CitationQueryEngine instance
-    """
-    global _citation_engine
-    
-    if _citation_engine is not None:
-        return _citation_engine
-    
-    init_llm_settings()
-    
-    index = load_index()
-    if index is None:
-        raise ValueError("No ChromaDB index found. Please run ingestion first.")
-    
-    # Create CitationQueryEngine
-    _citation_engine = CitationQueryEngine.from_args(
-        index=index,
-        similarity_top_k=SIMILARITY_TOP_K,
-        citation_chunk_size=CITATION_CHUNK_SIZE,
-    )
-    
-    print("Citation query engine initialized successfully.")
-    return _citation_engine
-
-def extract_sources(response) -> list[SourceInfo]:
-    """
-    Extract source information from a query response
+    Extract source information from NodeWithScore list
     """
     sources = []
     
-    if not hasattr(response, 'source_nodes') or not response.source_nodes:
-        return sources
-    
-    for node in response.source_nodes:
+    for node in nodes:
         # Extract metadata
         metadata = node.node.metadata if hasattr(node.node, 'metadata') else {}
         source_file = metadata.get('file_name', metadata.get('source', 'DSM-5'))
@@ -106,26 +80,68 @@ def extract_sources(response) -> list[SourceInfo]:
     
     return sources
 
+def synthesize_response(query: str, nodes: list[NodeWithScore]) -> str:
+    """
+    Generate response from LLM using retrieved nodes as context.
+    """
+    init_llm_settings()
+    
+    # Build context from nodes
+    context_parts = []
+    for i, node in enumerate(nodes, 1):
+        content = node.node.get_content() if hasattr(node.node, 'get_content') else str(node.node)
+        context_parts.append(f"[{i}] {content}")
+    
+    context_str = "\n\n".join(context_parts)
+    
+    # Create prompt
+    prompt = RESPONSE_TEMPLATE_VI.format(context_str=context_str, query_str=query)
+    
+    # Get response from LLM
+    response = Settings.llm.complete(prompt)
+    
+    return str(response)
+
 def query_with_citations(query: str) -> CitationResponse:
     """
-    Query the DSM-5 knowledge base and return answer with citations
+    Query DSM-5 knowledge base using Hybrid Retrieval + Reranker
     """
-    engine = get_citation_query_engine()
+    # Hybrid retrieval with reranking and fallback check
+    nodes, should_fallback = hybrid_retrieve_with_fallback(
+        query=query,
+        top_n=RERANK_TOP_N,
+        threshold=RELEVANCE_THRESHOLD,
+    )
     
-    # Execute query
-    response = engine.query(query)
+    # Handle fallback case
+    if should_fallback or not nodes:
+        return CitationResponse(
+            answer=FALLBACK_RESPONSE,
+            sources=[],
+            is_fallback=True,
+        )
     
-    # Extract sources and limit to MAX_SOURCES_RETURN
-    sources = extract_sources(response)[:MAX_SOURCES_RETURN]
+    # Generate response with LLM
+    answer = synthesize_response(query, nodes)
+    
+    # Extract sources
+    sources = extract_sources_from_nodes(nodes)[:MAX_SOURCES_RETURN]
     
     return CitationResponse(
-        answer=str(response),
+        answer=answer,
         sources=sources,
+        is_fallback=False,
     )
 
 def query_dsm5_with_sources(query: str) -> dict:
     """
     Query DSM-5 and return structured response with sources
+    Main entry point for the agent tool
     """
     result = query_with_citations(query)
     return result.to_dict()
+
+def reset_citation_engine():
+    """Reset all cached instances"""
+    clear_retriever_cache()
+    print("Citation engine reset complete")

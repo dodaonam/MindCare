@@ -1,10 +1,11 @@
 import uuid
 from typing import Optional
 from llama_index.core.memory import Memory
-
-TOKEN_LIMIT = 8000  # Total tokens for memory
-TOKEN_FLUSH_SIZE = 800  # Tokens to flush when limit exceeded (10% of limit)
-CHAT_HISTORY_TOKEN_RATIO = 0.7  # 70% for chat history, 30% for memory blocks
+from rag.global_settings import (
+    TOKEN_LIMIT,
+    TOKEN_FLUSH_SIZE,
+    CHAT_HISTORY_TOKEN_RATIO,
+)
 
 # Cache memories by session_id
 _memory_cache: dict[str, Memory] = {}

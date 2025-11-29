@@ -19,6 +19,7 @@ MindCare/
 ├── requirements.txt                # Python dependencies
 ├── README.md                       # Tài liệu dự án
 ├── venv/                           # Virtual environment
+├── run_ingest.py                   # Script chạy ingestion pipeline
 │ 
 ├── api/                            # FastAPI backend
 │   ├── main.py                     # Entry point API
@@ -33,6 +34,7 @@ MindCare/
 │   ├── assessments.py              # Logic đánh giá PHQ-9
 │   ├── citation_engine.py          # Query engine với trích dẫn nguồn
 │   ├── global_settings.py          # Cấu hình LLM và embedding
+│   ├── hybrid_retriever.py         # Hybrid Search (Vector + BM25) & Reranker
 │   ├── index_builder.py            # Xây dựng vector index
 │   ├── ingest_pipeline.py          # Xử lý và ingest documents
 │   ├── memory.py                   # Memory hội thoại theo session
@@ -48,8 +50,8 @@ MindCare/
     ├── assessments/                # Kết quả PHQ-9 (JSON)
     ├── cache/                      # Cache pipeline
     ├── chroma/                     # ChromaDB vector store
-    └── ingestion_storage/          # Documents đã xử lý
-
+    ├── ingestion_storage/          # Documents đã xử lý
+    └── nodes/                      # Serialized nodes cho BM25
 ```
 
 ## 🚀 Cài đặt và Chạy

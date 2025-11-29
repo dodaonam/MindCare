@@ -1,5 +1,5 @@
-from typing import Optional
-from rag.agent_core import get_agent, run_agent, clear_agent_session
+from typing import Optional, AsyncGenerator
+from rag.agent_core import get_agent, run_agent, run_agent_stream, clear_agent_session
 from rag.agent_tools import get_last_sources, clear_last_sources
 
 
@@ -17,6 +17,17 @@ async def chat(message: str, session_id: Optional[str] = None) -> tuple[str, str
     sources = get_last_sources()
     
     return response, session_id, sources
+
+async def chat_stream(message: str, session_id: Optional[str] = None) -> AsyncGenerator[tuple[str, str], None]:
+    """
+    Chat with the agent using streaming
+    """
+    # Clear previous sources before new query
+    clear_last_sources()
+    
+    # Run agent with streaming
+    async for token, sid in run_agent_stream(message, session_id):
+        yield token, sid
 
 
 async def new_session() -> str:
