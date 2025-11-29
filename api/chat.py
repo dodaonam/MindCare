@@ -1,6 +1,7 @@
+from typing import Optional
 from fastapi import APIRouter
 from pydantic import BaseModel
-from api.agent import chat
+from api.agent import chat, new_session, end_session
 from rag.safety import safety_check
 from rag.global_settings import init_llm_settings
 
@@ -8,10 +9,18 @@ router = APIRouter()
 
 class ChatRequest(BaseModel):
     message: str
+    session_id: Optional[str] = None
+
+class SessionResponse(BaseModel):
+    session_id: str
+    success: bool
+
 
 @router.post("/chat")
 async def chat_endpoint(req: ChatRequest):
     user_msg = req.message
+    session_id = req.session_id
+    
     init_llm_settings()
 
     # Safety check
@@ -20,6 +29,7 @@ async def chat_endpoint(req: ChatRequest):
     print("SAFETY CHECK:", safety)
 
     messages = []
+    sources = []
 
     # Crisis case
     if level == "crisis":
@@ -35,7 +45,9 @@ async def chat_endpoint(req: ChatRequest):
         })
 
         return {
+            "session_id": session_id,
             "messages": messages,
+            "sources": [],
             "safety": safety
         }
 
@@ -53,7 +65,7 @@ async def chat_endpoint(req: ChatRequest):
         })
 
     # Normal chat response
-    bot_reply = await chat(user_msg)
+    bot_reply, session_id, sources = await chat(user_msg, session_id)
 
     # Prepend warning message
     messages.append({
@@ -62,6 +74,20 @@ async def chat_endpoint(req: ChatRequest):
     })
 
     return {
+        "session_id": session_id,
         "messages": messages,
+        "sources": sources,
         "safety": safety
     }
+
+@router.post("/session/new", response_model=SessionResponse)
+async def create_session():
+    """Create a new chat session."""
+    session_id = await new_session()
+    return SessionResponse(session_id=session_id, success=True)
+
+@router.delete("/session/{session_id}", response_model=SessionResponse)
+async def delete_session(session_id: str):
+    """End and clear a chat session."""
+    success = await end_session(session_id)
+    return SessionResponse(session_id=session_id, success=success)

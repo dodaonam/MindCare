@@ -208,6 +208,4 @@ __marimo__/
 
 # data
 data/
-
-# test
-evaluate_output.txt
+docs/
