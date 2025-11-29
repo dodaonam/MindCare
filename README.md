@@ -31,10 +31,11 @@ MindCare/
 │   ├── agent_core.py               # AI agent chính
 │   ├── agent_tools.py              # Tools cho agent (DSM5Query)
 │   ├── assessments.py              # Logic đánh giá PHQ-9
+│   ├── citation_engine.py          # Query engine với trích dẫn nguồn
 │   ├── global_settings.py          # Cấu hình LLM và embedding
 │   ├── index_builder.py            # Xây dựng vector index
 │   ├── ingest_pipeline.py          # Xử lý và ingest documents
-│   ├── query_engine.py             # Vector search engine
+│   ├── memory.py                   # Memory hội thoại theo session
 │   └── safety.py                   # Phát hiện nguy cơ
 │
 ├── ui/                             # Streamlit frontend
@@ -43,18 +44,11 @@ MindCare/
 │       ├── phq9.py                 # Trang đánh giá PHQ-9
 │       └── health_dashboard.py     # Dashboard theo dõi
 │
-├── data/                           # Lưu trữ dữ liệu
-│   ├── assessments/                # Kết quả PHQ-9 (JSON)
-│   ├── cache/                      # Cache pipeline
-│   ├── chroma/                     # ChromaDB vector store
-│   └── ingestion_storage/          # Documents đã xử lý
-│
-└── test/                           # Testing & evaluation
-    ├── __init__.py
-    ├── evaluate_retrieval.py       # Đánh giá RAG
-    ├── eval_dataset.json           # Test dataset
-    ├── evaluate_output.txt         # Kết quả evaluation
-    └── test_ingest_pipeline.py     # Test ingestion
+└── data/                           # Lưu trữ dữ liệu
+    ├── assessments/                # Kết quả PHQ-9 (JSON)
+    ├── cache/                      # Cache pipeline
+    ├── chroma/                     # ChromaDB vector store
+    └── ingestion_storage/          # Documents đã xử lý
 
 ```
 
