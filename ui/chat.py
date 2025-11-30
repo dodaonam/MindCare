@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import json
 
 st.set_page_config(
     page_title="Mental Health Chat",
@@ -87,64 +88,91 @@ if user_input:
     })
     st.chat_message("user").markdown(user_input)
 
-    # Call API with session_id
+    # Prepare payload
+    payload = {"message": user_input}
+    if st.session_state.session_id:
+        payload["session_id"] = st.session_state.session_id
+
+    # Use streaming API
     try:
-        payload = {"message": user_input}
-        if st.session_state.session_id:
-            payload["session_id"] = st.session_state.session_id
+        with requests.post(API_URL, json=payload, stream=True, timeout=120) as response:
+            full_response = ""
+            sources = []
+            warning_shown = False
+            crisis_shown = False
             
-        with st.spinner("Đang xử lý..."):
-            response = requests.post(API_URL, json=payload, timeout=60)
-            data = response.json()
-    except requests.exceptions.Timeout:
-        st.error("⏱️ Request timeout. Vui lòng thử lại.")
-        st.stop()
-    except Exception as e:
-        st.error(f"❌ Không nhận được phản hồi từ server: {e}")
-        st.stop()
-
-    if "messages" not in data:
-        st.error("Phản hồi không hợp lệ từ server.")
-        st.write(data)
-        st.stop()
-
-    # Update session_id from response
-    if "session_id" in data and data["session_id"]:
-        st.session_state.session_id = data["session_id"]
-
-    # Get sources from response
-    sources = data.get("sources", [])
-
-    # Process response messages
-    for m in data["messages"]:
-        msg_type = m.get("type", "reply")
-        text = m.get("text", "")
-
-        # Calculate index for this message
-        msg_idx = len(st.session_state.messages)
-        
-        # Store message
-        st.session_state.messages.append({
-            "role": "assistant",
-            "type": msg_type,
-            "content": text
-        })
-
-        # Store sources for this message (only for reply type)
-        if msg_type == "reply" and sources:
-            st.session_state.sources_history[f"assistant_{msg_idx}"] = sources
-
-        # Display message
-        if msg_type == "warning":
-            st.warning(text)
-        elif msg_type == "crisis":
-            st.error(text)
-        else:
-            with st.chat_message("assistant"):
-                st.markdown(text)
+            # Create placeholder for streaming response
+            response_placeholder = None
+            
+            for line in response.iter_lines():
+                if line:
+                    line_text = line.decode('utf-8')
+                    if line_text.startswith('data: '):
+                        try:
+                            event_data = json.loads(line_text[6:])
+                            event_type = event_data.get('type')
+                            data = event_data.get('data')
+                            
+                            if event_type == 'safety':
+                                # Safety check received
+                                pass
+                            
+                            elif event_type == 'warning' and not warning_shown:
+                                st.warning(data)
+                                st.session_state.messages.append({
+                                    "role": "assistant",
+                                    "type": "warning",
+                                    "content": data
+                                })
+                                warning_shown = True
+                            
+                            elif event_type == 'crisis' and not crisis_shown:
+                                st.error(data)
+                                st.session_state.messages.append({
+                                    "role": "assistant",
+                                    "type": "crisis",
+                                    "content": data
+                                })
+                                crisis_shown = True
+                            
+                            elif event_type == 'token':
+                                if response_placeholder is None:
+                                    response_placeholder = st.chat_message("assistant").empty()
+                                full_response += data
+                                response_placeholder.markdown(full_response + "▌")
+                            
+                            elif event_type == 'sources':
+                                sources = data if data else []
+                            
+                            elif event_type == 'done':
+                                if event_data.get('session_id'):
+                                    st.session_state.session_id = event_data['session_id']
+                            
+                            elif event_type == 'error':
+                                st.error(f"❌ Error: {data}")
+                                
+                        except json.JSONDecodeError:
+                            pass
+            
+            # Finalize response
+            if full_response and response_placeholder:
+                response_placeholder.markdown(full_response)
                 
-                # Display sources
+                # Calculate message index
+                msg_idx = len(st.session_state.messages)
+                
+                # Store message
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "type": "reply",
+                    "content": full_response
+                })
+                
+                # Store sources
                 if sources:
+                    st.session_state.sources_history[f"assistant_{msg_idx}"] = sources
+                    
+                    # Display sources
                     with st.expander(f"📚 Nguồn tham khảo ({len(sources)} nguồn)"):
                         for i, source in enumerate(sources, 1):
                             score = source.get("score", 0)
@@ -152,3 +180,8 @@ if user_input:
                             st.markdown(f"**[{i}]** (Độ liên quan: {score_pct})")
                             st.caption(source.get("text", "")[:300] + "...")
                             st.divider()
+                            
+    except requests.exceptions.Timeout:
+        st.error("⏱️ Request timeout. Vui lòng thử lại.")
+    except Exception as e:
+        st.error(f"❌ Lỗi kết nối: {e}")

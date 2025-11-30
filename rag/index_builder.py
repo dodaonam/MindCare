@@ -7,11 +7,9 @@ from llama_index.core import (
     Settings,
 )
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from rag.global_settings import CHROMA_DIR
+from rag.global_settings import CHROMA_DIR, EMBEDDING_MODEL_NAME
 
 os.makedirs(CHROMA_DIR, exist_ok=True)
-
-EMBEDDING_MODEL_NAME = "AITeamVN/Vietnamese_Embedding"
 
 def get_embed_model():
     """Initialize and return the embedding model."""

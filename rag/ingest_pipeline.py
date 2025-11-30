@@ -1,14 +1,22 @@
 import os
 import asyncio
 import time
+import pickle
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.ingestion import IngestionPipeline, IngestionCache
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.extractors import SummaryExtractor
-from rag.global_settings import FILES_PATH, CACHE_FILE, init_llm_settings
+from rag.global_settings import (
+    FILES_PATH,
+    CACHE_FILE,
+    NODES_FILE,
+    EMBEDDING_MODEL_NAME,
+    init_llm_settings,
+)
 
 os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
+os.makedirs(os.path.dirname(NODES_FILE), exist_ok=True)
 
 init_llm_settings()
 
@@ -42,7 +50,7 @@ def ingest_documents():
         cache = None
         print("No cache file found. Creating a new pipeline.")
 
-    embed_model = HuggingFaceEmbedding(model_name="AITeamVN/Vietnamese_Embedding")
+    embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL_NAME)
 
     semantic_parser = SemanticSplitterNodeParser(
         buffer_size=1,
@@ -61,5 +69,23 @@ def ingest_documents():
 
     nodes = pipeline.run(documents=documents)
     pipeline.cache.persist(CACHE_FILE)
+    
+    # Save nodes to pickle file for BM25 retrieval
+    with open(NODES_FILE, "wb") as f:
+        pickle.dump(nodes, f)
+    print(f"Nodes saved to {NODES_FILE}")
+    
     print(f"Created {len(nodes)} nodes from DSM-5 documents.")
+    return nodes
+
+
+def load_nodes():
+    """Load nodes from pickle file for BM25 retrieval"""
+    if not os.path.exists(NODES_FILE):
+        raise FileNotFoundError(f"Nodes file not found: {NODES_FILE}. Please run ingestion first.")
+    
+    with open(NODES_FILE, "rb") as f:
+        nodes = pickle.load(f)
+    
+    print(f"Loaded {len(nodes)} nodes from {NODES_FILE}")
     return nodes

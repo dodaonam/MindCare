@@ -21,11 +21,15 @@ def dsm5_query_with_citations(query: str) -> str:
     """
     global _last_query_sources
     
+    print(f"\n🔍 DSM5Query TOOL CALLED with query: {query}")
+    
     # Query with citations
     result = query_dsm5_with_sources(query)
     
     # Store sources for API to retrieve
     _last_query_sources = result.get("sources", [])
+    
+    print(f"📚 Found {len(_last_query_sources)} sources")
     
     # Return just the answer for the agent
     return result.get("answer", "Không tìm thấy thông tin.")

@@ -54,13 +54,13 @@ def score_phq9(data: PHQ9Answers):
 
     # Suicide risk detection
     if q9 == 0:
-        suicide_risk = "không"
+        suicide_risk = "Không"
     elif q9 == 1:
-        suicide_risk = "nhẹ"
+        suicide_risk = "Nhẹ"
     elif q9 == 2:
-        suicide_risk = "trung bình"
+        suicide_risk = "Trung bình"
     else:
-        suicide_risk = "nghiêm trọng"
+        suicide_risk = "Nghiêm trọng"
 
     result = {
         "total_score": total,

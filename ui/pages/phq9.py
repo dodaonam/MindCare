@@ -28,6 +28,12 @@ st.set_page_config(
     layout="wide"
 )
 
+# Initialize session state for form reset
+if "phq9_submitted" not in st.session_state:
+    st.session_state.phq9_submitted = False
+if "phq9_result" not in st.session_state:
+    st.session_state.phq9_result = None
+
 st.title("📝 Bài Đánh Giá PHQ-9")
 st.markdown("Công cụ đánh giá mức độ trầm cảm trong 2 tuần gần đây.")
 
@@ -47,34 +53,59 @@ scores = []
 
 st.subheader("📋 Câu hỏi")
 for idx, q in enumerate(questions):
+    # Use default value 0, reset after submission
+    default_val = 0
     score = st.radio(
         label=q,
         options=[0, 1, 2, 3],
-        key=f"phq9_q{idx}",
+        index=default_val,
+        key=f"phq9_q{idx}_{st.session_state.get('phq9_form_key', 0)}",
         horizontal=True
     )
     scores.append(score)
 
 st.divider()
 
-if st.button("📤 Gửi bài đánh giá"):
-    if len(scores) != 9:
-        st.error("Vui lòng trả lời đầy đủ 9 câu hỏi.")
-        st.stop()
+# Show previous result if exists
+if st.session_state.phq9_result:
+    result = st.session_state.phq9_result
+    st.success("🎉 Kết quả đánh giá gần nhất:")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("🔢 Tổng điểm", result.get('total_score'))
+    with col2:
+        st.metric("🟦 Mức độ", result.get('level'))
+    with col3:
+        st.metric("⚠️ Nguy cơ tự hại", result.get('suicide_risk'))
+    
+    saved_file = result.get("saved_file")
+    if saved_file:
+        st.caption(f"📁 File: `{saved_file}`")
+    
+    st.divider()
 
-    result = submit_answers(scores)
+col1, col2 = st.columns([1, 1])
 
-    if not result:
-        st.error("Không gửi được bài đánh giá. Vui lòng thử lại.")
-    elif result.get("error"):
-        st.error(result["error"])
-    else:
-        st.success("🎉 Đã chấm điểm thành công!")
+with col1:
+    if st.button("📤 Gửi bài đánh giá", use_container_width=True):
+        if len(scores) != 9:
+            st.error("Vui lòng trả lời đầy đủ 9 câu hỏi.")
+            st.stop()
 
-        st.markdown(f"### 🔢 Tổng điểm: **{result.get('total_score')}**")
-        st.markdown(f"### 🟦 Mức độ: **{result.get('level')}**")
-        st.markdown(f"### ⚠️ Nguy cơ tự hại (câu 9): **{result.get('suicide_risk')}**")
+        result = submit_answers(scores)
 
-        saved_file = result.get("saved_file")
-        if saved_file:
-            st.markdown(f"📁 Dữ liệu đã được lưu vào file:\n`{saved_file}`")
+        if not result:
+            st.error("Không gửi được bài đánh giá. Vui lòng thử lại.")
+        elif result.get("error"):
+            st.error(result["error"])
+        else:
+            # Store result and reset form
+            st.session_state.phq9_result = result
+            st.session_state.phq9_form_key = st.session_state.get('phq9_form_key', 0) + 1
+            st.rerun()
+
+with col2:
+    if st.button("🔄 Làm lại", use_container_width=True):
+        st.session_state.phq9_result = None
+        st.session_state.phq9_form_key = st.session_state.get('phq9_form_key', 0) + 1
+        st.rerun()
